@@ -18,6 +18,21 @@ inputs.ports.inputs.zandy.follows = "zandy";
 | `ports.presets.claude` | Claude Code |
 | `ports.presets.opencode` | opencode |
 
+A preset doesn't open the project directory. Combine it with the project rules:
+
+```nix
+preset = ports.presets.claude // { rules = ports.rules.project ++ ports.presets.claude.rules; };
+```
+
+## Project rules
+
+`ports.rules.project` lets the agent read the whole project and write everything in it except dot paths, at any depth: `.envrc`, `.git`, `.vscode`, `.github` and the like. Those are files your tools read or run on their own, outside the sandbox.
+
+- **Open a dot path** with `filesystem.allowWrite`, e.g. `[ ".zig-cache" ]`. Only open what no tool runs: build caches are fine, `.vscode` or `.github` are not.
+- **Let the agent commit** with `filesystem.allowWrite = [ ".git" ]`. That opens all of `.git`, including `.git/config` and `.git/hooks`, which git runs as you. Without it, the agent can still run `git status` and `git diff`, and you commit.
+- **A project inside a dot directory**, like `~/.dotfiles/foo`, is read-only as a whole, because the rule checks the full path.
+- **A project under `$TMPDIR` or `/tmp`** isn't protected by the rule when the preset allows writing there, as the claude preset does.
+
 ## Model backends
 
 One gateway per env. It adds the credentials outside the sandbox and forwards to one fixed upstream.
