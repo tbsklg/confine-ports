@@ -1,0 +1,49 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1791956154,
+        "narHash": "sha256-jBYGPi4udQ9uo4KQp9m2J0546nJVQitG15gvZSaVVAs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "55bfb4d7437bd4e09ab7cba58a43bd68eb310044",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": [
+          "zandy",
+          "nixpkgs"
+        ],
+        "zandy": "zandy"
+      }
+    },
+    "zandy": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1793705288,
+        "narHash": "sha256-dCWbPpW2cdlI3ALRTEA+m1vB4H8Gvp16L3kjv3V+UEE=",
+        "owner": "tbsklg",
+        "repo": "zandy.nix",
+        "rev": "987f079096e90c43ac42b553575a0251649fe752",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tbsklg",
+        "repo": "zandy.nix",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
