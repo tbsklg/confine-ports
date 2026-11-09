@@ -1,0 +1,20 @@
+name: probe
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Probe the rule sets against the locked zandy
+        run: tests/run-probe.sh
+
+      - name: Probe the rule sets against zandy main
+        run: tests/run-probe.sh --override-input zandy github:tbsklg/zandy.nix

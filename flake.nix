@@ -34,6 +34,8 @@
     {
       inherit presets gateways rules;
 
+      packages.${system}.project-probe = import ./tests/project-test.nix { inherit pkgs; inherit (zandy.lib) mkSandboxEnv; project = rules.project; };
+
       checks.${system} =
         builtins.mapAttrs (name: preset: zandy.lib.mkSandboxEnv { inherit pkgs name; preset = withProject preset; }) presets
         // nixpkgs.lib.mapAttrs' (name: gateway: {
