@@ -45,7 +45,6 @@ in
     { action = "allow"; operation = "mach_priv_task_port"; filter = { target = "same-sandbox"; }; }
     { action = "allow"; operation = "network_outbound"; filter = { remote_tcp = "*:443"; }; }
     { action = "allow"; operation = "network_outbound"; filter = { remote_unix_socket = { literal = "/private/var/run/mDNSResponder"; }; }; }
-    { action = "allow"; operation = "network_outbound"; filter = { remote_unix_socket = { param = "BROKER_SOCK"; }; }; }
     { action = "allow"; operation = "system_socket"; filter = { socket_domain = "af_system"; }; }
     { action = "allow"; operation = "mach_lookup"; filter = { global_name = "com.apple.bsd.dirhelper"; }; }
     { action = "allow"; operation = "mach_lookup"; filter = { global_name = "com.apple.logd"; }; }
@@ -67,7 +66,6 @@ in
     { action = "allow"; operation = "file_read_data"; filter = { literal = { param_append = { param = "HOME"; suffix = "/.config/git/ignore"; }; }; }; }
     { action = "allow"; operation = "file_read_data"; filter = { literal = { param_append = { param = "HOME"; suffix = "/.config/git/attributes"; }; }; }; }
     { action = "allow"; operation = "file_read_data"; filter = { subpath = { literal = "/usr/share/icu"; }; }; }
-    { action = "allow"; operation = "file_all"; filter = { subpath = { param = "CWD"; }; }; }
     { action = "deny"; operation = "file_write_all"; filter = { subpath = { param_append = { param = "CWD"; suffix = "/.claude"; }; }; }; }
     { action = "deny"; operation = "file_write_all"; filter = { literal = { param_append = { param = "CWD"; suffix = "/.mcp.json"; }; }; }; }
     { action = "allow"; operation = "file_all"; filter = { literal = { literal = "/dev/null"; }; }; }

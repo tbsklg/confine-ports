@@ -14,7 +14,6 @@
     { action = "allow"; operation = "process_info_all"; filter = { target = "same-sandbox"; }; }
     { action = "allow"; operation = "network_outbound"; filter = { remote_tcp = "*:443"; }; }
     { action = "allow"; operation = "network_outbound"; filter = { remote_unix_socket = { literal = "/private/var/run/mDNSResponder"; }; }; }
-    { action = "allow"; operation = "network_outbound"; filter = { remote_unix_socket = { param = "BROKER_SOCK"; }; }; }
     { action = "allow"; operation = "system_socket"; filter = { socket_domain = "af_system"; }; }
     { action = "allow"; operation = "ipc_posix_shm_read_data"; }
     { action = "allow"; operation = "ipc_posix_shm_write_create"; }
@@ -50,7 +49,6 @@
     { action = "deny"; operation = "file_all"; filter = { subpath = { literal = "/private/tmp/com.apple.launchd"; }; }; }
     { action = "deny"; operation = "file_all"; filter = { subpath = { literal = "/private/var/db"; }; }; }
     { action = "deny"; operation = "file_all"; filter = { subpath = { literal = "/private/var/root"; }; }; }
-    { action = "allow"; operation = "file_all"; filter = { subpath = { param = "CWD"; }; }; }
     { action = "deny"; operation = "file_write_all"; filter = { subpath = { param_append = { param = "CWD"; suffix = "/.opencode"; }; }; }; }
     { action = "deny"; operation = "file_write_all"; filter = { literal = { param_append = { param = "CWD"; suffix = "/opencode.json"; }; }; }; }
     { action = "deny"; operation = "file_write_all"; filter = { literal = { param_append = { param = "CWD"; suffix = "/opencode.jsonc"; }; }; }; }

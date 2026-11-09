@@ -16,6 +16,8 @@
         claude = import ./presets/claude.nix;
         opencode = import ./presets/opencode.nix;
       };
+      rules.project = import ./rules/project.nix;
+      withProject = preset: preset // { rules = rules.project ++ preset.rules; };
       gateways = {
         bedrock = import ./gateways/bedrock.nix;
         anthropic = import ./gateways/anthropic.nix { inherit mkGateway; };
@@ -30,13 +32,13 @@
       };
     in
     {
-      inherit presets gateways;
+      inherit presets gateways rules;
 
       checks.${system} =
-        builtins.mapAttrs (name: preset: zandy.lib.mkSandboxEnv { inherit pkgs name preset; }) presets
+        builtins.mapAttrs (name: preset: zandy.lib.mkSandboxEnv { inherit pkgs name; preset = withProject preset; }) presets
         // nixpkgs.lib.mapAttrs' (name: gateway: {
           name = "claude-${name}";
-          value = zandy.lib.mkSandboxEnv { inherit pkgs gateway; name = "claude-${nixpkgs.lib.toLower name}"; preset = presets.claude; };
+          value = zandy.lib.mkSandboxEnv { inherit pkgs gateway; name = "claude-${nixpkgs.lib.toLower name}"; preset = withProject presets.claude; };
         }) gatewayChecks;
     };
 }
