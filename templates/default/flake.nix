@@ -19,7 +19,7 @@
           name = "claude";
           preset = ports.presets.claude;
           packages = [ pkgs.ripgrep ];
-          gateway = zandy.gateways.anthropicOauth { };
+          gateway = ports.gateways.anthropicOauth { };
         };
       });
     };
