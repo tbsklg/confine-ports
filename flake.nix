@@ -32,11 +32,6 @@
     {
       inherit presets gateways;
 
-      templates.default = {
-        path = ./templates/default;
-        description = "A zandy sandbox env: run with `nix run`, install with `nix profile add`";
-      };
-
       checks.${system} =
         builtins.mapAttrs (name: preset: zandy.lib.mkSandboxEnv { inherit pkgs name preset; }) presets
         // nixpkgs.lib.mapAttrs' (name: gateway: {

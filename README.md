@@ -2,17 +2,14 @@
 
 Presets and gateways for [zandy](https://github.com/tbsklg/zandy.nix). zandy is the base: the launcher, the broker, `mkSandboxEnv` and `mkGateway`. This repo holds what runs on it, and is updated on its own.
 
-## Quickstart
+## Use
 
-```sh
-mkdir ~/sandboxes && cd ~/sandboxes
-nix flake init -t github:tbsklg/zandy-ports
-git init && git add -A
-cd your-project
-nix run ~/sandboxes
+zandy's template plugs this repo in as the `ports` input. See the [zandy quickstart](https://github.com/tbsklg/zandy.nix#quickstart). To add it to an existing flake:
+
+```nix
+inputs.ports.url = "github:tbsklg/zandy-ports";
+inputs.ports.inputs.zandy.follows = "zandy";
 ```
-
-The template uses your Claude login. Run `claude` once outside zandy and log in.
 
 ## Presets
 
