@@ -1,0 +1,12 @@
+name = "ports"
+preset = "claude"
+packages = ["ripgrep"]
+
+[gateway.bedrock]
+profile = "acme-bedrock"
+region = "eu-west-1"
+
+[adapters.gitlab]
+
+[adapters.aws]
+profiles = ["acme-dev"]

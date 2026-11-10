@@ -6,53 +6,48 @@
 
   outputs = { zandy, nixpkgs, ... }:
     let
+      inherit (nixpkgs) lib;
       system = "aarch64-darwin";
+      tree = import ./lib/catalog.nix { inherit lib zandy; };
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "claude-code" ];
+        config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) (lib.concatMap (port: port.unfree or [ ]) (lib.attrValues tree.presets));
       };
-      inherit (zandy.lib) mkGateway;
-      presets = {
-        claude = import ./presets/claude.nix;
-        opencode = import ./presets/opencode.nix;
-      };
+      inherit (zandy.lib) mkSandboxEnv;
+
       rules.project = import ./rules/project.nix;
       withProject = preset: preset // { rules = rules.project ++ preset.rules; };
-      adapters = {
-        gitlab = import ./adapters/gitlab.nix;
-        aws = import ./adapters/aws.nix;
+      catalog = tree // {
+        presets = lib.mapAttrs (_: port: port // { call = args: withProject (port.call args); }) tree.presets;
       };
-      gateways = {
-        bedrock = import ./gateways/bedrock.nix;
-        anthropic = import ./gateways/anthropic.nix { inherit mkGateway; };
-        anthropicOauth = import ./gateways/anthropic-oauth.nix { inherit mkGateway; };
-        openai = import ./gateways/openai.nix { inherit mkGateway; };
-      };
-      gatewayChecks = {
-        bedrock = gateways.bedrock { profile = "check"; region = "eu-west-1"; };
-        anthropic = gateways.anthropic { };
-        anthropicOauth = gateways.anthropicOauth { };
-        openai = gateways.openai { };
-      };
+      claude = catalog.presets.claude.call { };
+      problems = import ./lib/portcheck.nix { inherit lib pkgs; catalog = tree; };
+
+      envName = kind: name: "${kind}-${lib.toLower name}";
+      portChecks = kind: build: lib.mapAttrs' (name: port: {
+        name = envName kind name;
+        value = mkSandboxEnv ({ inherit pkgs; name = envName kind name; preset = claude; } // build port);
+      }) catalog.${kind};
     in
     {
-      inherit presets adapters gateways rules;
+      presets = lib.mapAttrs (_: port: port.call { }) tree.presets;
+      gateways = lib.mapAttrs (_: port: port.call) tree.gateways;
+      adapters = lib.mapAttrs (_: port: port.call) tree.adapters;
+      inherit rules catalog;
 
-      packages.${system}.project-probe = import ./tests/project-test.nix { inherit pkgs; inherit (zandy.lib) mkSandboxEnv; project = rules.project; };
+      packages.${system}.project-probe = import ./tests/project-test.nix { inherit pkgs mkSandboxEnv; project = rules.project; };
 
       checks.${system} =
-        builtins.mapAttrs (name: preset: zandy.lib.mkSandboxEnv { inherit pkgs name; preset = withProject preset; }) presets
-        // nixpkgs.lib.mapAttrs' (name: gateway: {
-          name = "claude-${name}";
-          value = zandy.lib.mkSandboxEnv { inherit pkgs gateway; name = "claude-${nixpkgs.lib.toLower name}"; preset = withProject presets.claude; };
-        }) gatewayChecks
+        portChecks "presets" (port: { preset = port.call { }; })
+        // portChecks "gateways" (port: { gateway = port.call port.example; })
+        // portChecks "adapters" (port: { adapters = [ (port.call port.example) ]; })
         // {
-          claude-adapters = zandy.lib.mkSandboxEnv {
-            inherit pkgs;
-            name = "claude-adapters";
-            preset = withProject presets.claude;
-            adapters = [ (adapters.gitlab { }) (adapters.aws { profiles = [ "check" ]; }) ];
-          };
+          portcheck = pkgs.runCommand "portcheck" { } (
+            if problems == [ ] then "touch $out"
+            else "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" problems)} >&2; exit 1"
+          );
+          config = zandy.lib.fromConfig { inherit system catalog; config = ./tests/zandy.toml; };
+          schema = zandy.lib.schemaFor { inherit system catalog; };
         };
     };
 }
