@@ -1,6 +1,6 @@
 # zandy-ports
 
-Presets and gateways for [zandy](https://github.com/tbsklg/zandy.nix). zandy is the base: the launcher, the broker, `mkSandboxEnv` and `mkGateway`. This repo holds what runs on it, and is updated on its own.
+Presets, adapters and gateways for [zandy](https://github.com/tbsklg/zandy.nix). zandy is the base: the launcher, the broker, `mkSandboxEnv` and `mkGateway`. This repo holds what runs on it, and is updated on its own.
 
 ## Use
 
@@ -32,6 +32,24 @@ preset = ports.presets.claude // { rules = ports.rules.project ++ ports.presets.
 - **Let the agent commit** with `filesystem.allowWrite = [ ".git" ]`. That opens all of `.git`, including `.git/config` and `.git/hooks`, which git runs as you. Without it, the agent can still run `git status` and `git diff`, and you commit.
 - **A project inside a dot directory**, like `~/.dotfiles/foo`, is read-only as a whole, because the rule checks the full path.
 - **A project under `$TMPDIR` or `/tmp`** isn't protected by the rule when the preset allows writing there, as the claude preset does.
+
+## Adapters
+
+An adapter runs a tool outside the sandbox, with your own login, when the agent calls it through `zandy-client`.
+
+```nix
+adapters = [
+  (ports.adapters.gitlab { })
+  (ports.adapters.aws { profiles = [ "acme-dev" ]; })
+];
+```
+
+| Adapter | Method | Login |
+|---|---|---|
+| `ports.adapters.gitlab { host ? "gitlab.com" }` | `gitlab.cli`: any `glab` command | `glab auth login` |
+| `ports.adapters.aws { profiles }` | `aws.cli`: any `aws` command with one of `profiles` | e.g. `aws sso login --profile acme-dev` |
+
+**Both are open.** They pass any arguments to the tool, so the agent can do whatever your login can, and can make the tool print its credential: `glab config get token`, `aws configure export-credentials`. Use them only with a login you would hand the agent directly, e.g. a scoped GitLab token or a read-only AWS profile.
 
 ## Model backends
 
@@ -75,7 +93,7 @@ For a backend not listed here, build one with [`zandy.lib.mkGateway`](https://gi
 
 - A preset allows only what its program needs. Nothing that runs outside the sandbox, like the program's own project config, is writable.
 - A gateway forwards to one fixed host and adds its credential there, never inside the sandbox.
-- An adapter has narrow methods with `string` and `choice` params. No `list` param that passes arguments to a tool holding a credential: the agent could make the tool print it.
+- An adapter has narrow methods with `string` and `choice` params. No `list` param that passes arguments to a tool holding a credential: the agent could make the tool print it. The gitlab and aws adapters don't follow this yet.
 
 ## Update
 

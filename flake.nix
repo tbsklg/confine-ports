@@ -1,5 +1,5 @@
 {
-  description = "zandy-ports: presets and gateways for zandy";
+  description = "zandy-ports: presets, adapters and gateways for zandy";
 
   inputs.zandy.url = "github:tbsklg/zandy.nix";
   inputs.nixpkgs.follows = "zandy/nixpkgs";
@@ -18,6 +18,10 @@
       };
       rules.project = import ./rules/project.nix;
       withProject = preset: preset // { rules = rules.project ++ preset.rules; };
+      adapters = {
+        gitlab = import ./adapters/gitlab.nix;
+        aws = import ./adapters/aws.nix;
+      };
       gateways = {
         bedrock = import ./gateways/bedrock.nix;
         anthropic = import ./gateways/anthropic.nix { inherit mkGateway; };
@@ -32,7 +36,7 @@
       };
     in
     {
-      inherit presets gateways rules;
+      inherit presets adapters gateways rules;
 
       packages.${system}.project-probe = import ./tests/project-test.nix { inherit pkgs; inherit (zandy.lib) mkSandboxEnv; project = rules.project; };
 
@@ -41,6 +45,14 @@
         // nixpkgs.lib.mapAttrs' (name: gateway: {
           name = "claude-${name}";
           value = zandy.lib.mkSandboxEnv { inherit pkgs gateway; name = "claude-${nixpkgs.lib.toLower name}"; preset = withProject presets.claude; };
-        }) gatewayChecks;
+        }) gatewayChecks
+        // {
+          claude-adapters = zandy.lib.mkSandboxEnv {
+            inherit pkgs;
+            name = "claude-adapters";
+            preset = withProject presets.claude;
+            adapters = [ (adapters.gitlab { }) (adapters.aws { profiles = [ "check" ]; }) ];
+          };
+        };
     };
 }
