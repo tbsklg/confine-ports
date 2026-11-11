@@ -1,10 +1,10 @@
 let
   prompt = ''
-    You run inside the zandy sandbox. Tools outside it have no credentials here.
-    Run `zandy-client discover` to list the available broker methods, then call one with
-    `zandy-client call <method> '<json args>'`.
+    You run inside the confine sandbox. Tools outside it have no credentials here.
+    Run `confine-client discover` to list the available broker methods, then call one with
+    `confine-client call <method> '<json args>'`.
   '';
-  settings = builtins.toJSON { statusLine = { type = "command"; command = "echo '🔒 zandy'"; }; };
+  settings = builtins.toJSON { statusLine = { type = "command"; command = "echo '🔒 confine'"; }; };
 in
 {
   name = "claude";
@@ -22,7 +22,7 @@ in
   gatewayEnv = {
     anthropic = {
       ANTHROPIC_BASE_URL = "{url}";
-      ANTHROPIC_AUTH_TOKEN = "zandy-gateway";
+      ANTHROPIC_AUTH_TOKEN = "confine-gateway";
     };
     bedrock = gateway: {
       CLAUDE_CODE_USE_BEDROCK = "1";

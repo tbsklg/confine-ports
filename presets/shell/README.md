@@ -10,8 +10,8 @@ packages = ["nodejs"]
 
 ```sh
 cd your-project
-zandy-shell npm install --cache "$TMPDIR/npm"
-zandy-shell                     # interactive
+confine-shell npm install --cache "$TMPDIR/npm"
+confine-shell                     # interactive
 ```
 
 The command can read the project and write it except dot paths, write `$TMPDIR` and `/private/tmp`, and connect to port 443 and DNS. It can't read or write the rest of your home. No gateway is needed.

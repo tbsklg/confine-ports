@@ -8,4 +8,4 @@ The agent can't write `~/.config/opencode/opencode.json`, `~/.config/opencode/pl
 
 | Symptom | Fix |
 |---|---|
-| `operation not permitted mkdir '/var/folders/…'` | Start opencode once without zandy |
+| `operation not permitted mkdir '/var/folders/…'` | Start opencode once without confine |

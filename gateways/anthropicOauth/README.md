@@ -4,4 +4,4 @@
 [gateway.anthropicOauth]
 ```
 
-Uses your Claude login. zandy reads the token from your login keychain at start.
+Uses your Claude login. confine reads the token from your login keychain at start.

@@ -4,4 +4,4 @@
 [gateway.anthropic]
 ```
 
-Needs the API key, stored with `zandy-claude --zandy-secret anthropic-api-key`.
+Needs the API key, stored with `confine-claude --confine-secret anthropic-api-key`.

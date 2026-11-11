@@ -4,9 +4,9 @@
   build = { service }: mkGateway {
     name = "anthropic";
     host = "api.anthropic.com";
-    headers.Authorization = [ "Bearer {env.ZANDY_GATEWAY_TOKEN}" ];
+    headers.Authorization = [ "Bearer {env.CONFINE_GATEWAY_TOKEN}" ];
     addHeaders.anthropic-beta = [ "oauth-2025-04-20" ];
-    secrets.ZANDY_GATEWAY_TOKEN.keychain = {
+    secrets.CONFINE_GATEWAY_TOKEN.keychain = {
       inherit service;
       store = "login";
       field = [ "claudeAiOauth" "accessToken" ];

@@ -1,19 +1,19 @@
 {
-  description = "zandy-ports: presets, adapters and gateways for zandy";
+  description = "confine-ports: presets, adapters and gateways for confine";
 
-  inputs.zandy.url = "github:tbsklg/zandy.nix";
-  inputs.nixpkgs.follows = "zandy/nixpkgs";
+  inputs.confine.url = "github:tbsklg/confine.nix";
+  inputs.nixpkgs.follows = "confine/nixpkgs";
 
-  outputs = { zandy, nixpkgs, ... }:
+  outputs = { confine, nixpkgs, ... }:
     let
       inherit (nixpkgs) lib;
       system = "aarch64-darwin";
-      tree = import ./lib/catalog.nix { inherit lib zandy; };
+      tree = import ./lib/catalog.nix { inherit lib confine; };
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) (lib.concatMap (port: port.unfree or [ ]) (lib.attrValues tree.presets));
       };
-      inherit (zandy.lib) mkSandboxEnv;
+      inherit (confine.lib) mkSandboxEnv;
 
       rules.project = import ./rules/project.nix;
       withProject = preset: preset // { rules = rules.project ++ preset.rules; };
@@ -46,8 +46,8 @@
             if problems == [ ] then "touch $out"
             else "echo ${lib.escapeShellArg (lib.concatStringsSep "\n" problems)} >&2; exit 1"
           );
-          config = zandy.lib.fromConfig { inherit system catalog; config = ./tests/zandy.toml; };
-          schema = zandy.lib.schemaFor { inherit system catalog; };
+          config = confine.lib.fromConfig { inherit system catalog; config = ./tests/confine.toml; };
+          schema = confine.lib.schemaFor { inherit system catalog; };
         };
     };
 }

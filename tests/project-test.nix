@@ -16,6 +16,6 @@ mkSandboxEnv {
       { action = "allow"; operation = "file_read_data"; filter = { literal = { literal = "/"; }; }; }
     ];
   };
-  filesystem.allowWrite = [ ".zandy-allowed" ".envrc" ];
+  filesystem.allowWrite = [ ".confine-allowed" ".envrc" ];
   packages = [ (pkgs.writeShellScriptBin "project-probe" (builtins.readFile ./project-probe.sh)) ];
 }

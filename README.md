@@ -1,10 +1,10 @@
-# zandy-ports
+# confine-ports
 
-Presets, adapters and gateways for [zandy](https://github.com/tbsklg/zandy.nix). zandy is the base: the launcher, the broker, `mkSandboxEnv` and `mkGateway`. This repo holds what runs on it, and is updated on its own.
+Presets, adapters and gateways for [confine](https://github.com/tbsklg/confine.nix). confine is the base: the launcher, the broker, `mkSandboxEnv` and `mkGateway`. This repo holds what runs on it, and is updated on its own.
 
 ## Use
 
-Start from the [zandy quickstart](https://github.com/tbsklg/zandy.nix#quickstart): its template plugs this repo in and you pick ports by name in `zandy.toml`.
+Start from the [confine quickstart](https://github.com/tbsklg/confine.nix#quickstart): its template plugs this repo in and you pick ports by name in `confine.toml`.
 
 ```toml
 preset = "claude"
@@ -17,7 +17,7 @@ region = "eu-west-1"
 host = "gitlab.example.com"
 ```
 
-`ports.catalog` is what the template hands to zandy: every port below, with the project rules on every preset. From Nix, use the ports directly: `ports.presets.claude`, `ports.gateways.bedrock { … }`, `ports.adapters.gitlab { … }`, `ports.rules.project`.
+`ports.catalog` is what the template hands to confine: every port below, with the project rules on every preset. From Nix, use the ports directly: `ports.presets.claude`, `ports.gateways.bedrock { … }`, `ports.adapters.gitlab { … }`, `ports.rules.project`.
 
 ## Ports
 
@@ -54,7 +54,7 @@ A port is a directory under `presets/`, `gateways/` or `adapters/` with a `port.
 }
 ```
 
-`port.nix` gets `zandy.lib`. `args` types are `string` and `list` (of strings); each has a `default` or an `example`, which the checks build with. `build` takes exactly the declared args. `unfree` lists unfree packages the port needs, e.g. `[ "claude-code" ]`. A preset's `build` returns the preset, a gateway's or adapter's what `mkSandboxEnv` takes.
+`port.nix` gets `confine.lib`. `args` types are `string` and `list` (of strings); each has a `default` or an `example`, which the checks build with. `build` takes exactly the declared args. `unfree` lists unfree packages the port needs, e.g. `[ "claude-code" ]`. A preset's `build` returns the preset, a gateway's or adapter's what `mkSandboxEnv` takes.
 
 `nix flake check` checks this layout and the last of these rules:
 
@@ -70,4 +70,4 @@ In your env's directory:
 nix flake update && nix profile upgrade --all
 ```
 
-`ports` follows your `zandy` input, so both use the same base. `nix flake update ports` updates only the ports, `nix flake update zandy` only the base. Rebuild the schema afterwards: `nix build .#schema -o zandy.schema.json`.
+`ports` follows your `confine` input, so both use the same base. `nix flake update ports` updates only the ports, `nix flake update confine` only the base. Rebuild the schema afterwards: `nix build .#schema -o confine.schema.json`.
