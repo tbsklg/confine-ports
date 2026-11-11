@@ -1,15 +1,11 @@
 {
   name = "shell";
-  binary = "shell";
-  packages = pkgs: [
-    (pkgs.writeShellScriptBin "shell" ''
-      export NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
-      exec ${pkgs.bash}/bin/bash --norc "$@"
-    '')
-    pkgs.bash
-    pkgs.coreutils
-  ];
+  packages = pkgs: [ pkgs.bash pkgs.coreutils pkgs.cacert ];
   env = [ "HOME" "TMPDIR" "USER" "TERM" "COLORTERM" "LANG" "LC_ALL" ];
+  setEnv = pkgs: {
+    NIX_SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+    SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
 
   rules = [
     { action = "allow"; operation = "process_exec"; filter = { literal = { literal = "/bin/sh"; }; }; }

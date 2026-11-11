@@ -4,7 +4,6 @@ mkSandboxEnv {
   name = "project-probe";
   preset = {
     name = "project-probe";
-    binary = "project-probe";
     packages = pkgs: [ pkgs.bash pkgs.coreutils ];
     env = [ "HOME" "TMPDIR" "USER" ];
     rules = project ++ [

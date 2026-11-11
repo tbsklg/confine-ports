@@ -1,10 +1,7 @@
 {
   name = "opencode";
-  binary = "opencode";
   packages = pkgs: [ pkgs.opencode pkgs.bash pkgs.coreutils pkgs.git ];
   env = [ "HOME" "TMPDIR" "USER" "TERM" "COLORTERM" "LANG" "LC_ALL" ];
-
-  args = [ ];
 
   rules = [
     { action = "allow"; operation = "process_fork"; }

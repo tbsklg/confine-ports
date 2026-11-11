@@ -10,13 +10,13 @@ packages = ["nodejs"]
 
 ```sh
 cd your-project
-zandy-shell -c 'npm install --cache "$TMPDIR/npm"'
+zandy-shell npm install --cache "$TMPDIR/npm"
 zandy-shell                     # interactive
 ```
 
 The command can read the project and write it except dot paths, write `$TMPDIR` and `/private/tmp`, and connect to port 443 and DNS. It can't read or write the rest of your home. No gateway is needed.
 
-bash starts without rc files. `curl` and other tools built with Nix find the CA bundle through `NIX_SSL_CERT_FILE` and `SSL_CERT_FILE`, which the preset sets.
+`curl` and other tools built with Nix find the CA bundle through `NIX_SSL_CERT_FILE` and `SSL_CERT_FILE`, which the preset sets.
 
 ## Troubleshooting
 

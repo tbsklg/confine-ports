@@ -4,12 +4,19 @@ let
     Run `zandy-client discover` to list the available broker methods, then call one with
     `zandy-client call <method> '<json args>'`.
   '';
+  settings = builtins.toJSON { statusLine = { type = "command"; command = "echo '🔒 zandy'"; }; };
 in
 {
   name = "claude";
-  binary = "claude";
   icon = "✻";
-  packages = pkgs: [ pkgs.claude-code pkgs.bash pkgs.coreutils pkgs.git ];
+  packages = pkgs: [
+    (pkgs.writeShellScriptBin "claude" ''
+      exec ${pkgs.claude-code}/bin/claude --append-system-prompt ${pkgs.lib.escapeShellArg prompt} --settings ${pkgs.lib.escapeShellArg settings} "$@"
+    '')
+    pkgs.bash
+    pkgs.coreutils
+    pkgs.git
+  ];
   env = [ "HOME" "TMPDIR" "USER" "TERM" "COLORTERM" "LANG" "LC_ALL" ];
 
   gatewayEnv = {
@@ -24,13 +31,6 @@ in
       AWS_REGION = gateway.region;
     };
   };
-
-  args = [
-    "--append-system-prompt"
-    prompt
-    "--settings"
-    (builtins.toJSON { statusLine = { type = "command"; command = "echo '🔒 zandy'"; }; })
-  ];
 
   rules = [
     { action = "allow"; operation = "process_exec"; filter = { literal = { literal = "/bin/sh"; }; }; }

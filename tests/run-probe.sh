@@ -10,4 +10,4 @@ nix build "$repo#project-probe" --print-build-logs --out-link "$project/result" 
 cd "$project"
 git init -q
 touch flake.nix .envrc
-"$project/result/bin/zandy-project-probe"
+"$project/result/bin/zandy-project-probe" project-probe
